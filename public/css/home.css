@@ -1,0 +1,17 @@
+.item {
+  background-color: whitesmoke;
+  height: 200px;
+  width: 300px;
+  cursor: pointer;
+  color: white;
+  color: black;
+  border-radius: 20px;
+  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.5);
+  border-bottom: 5px solid rgb(41, 61, 73);
+}
+.item:hover {
+  filter: brightness(90%);
+}
+.item img {
+  height: 100px;
+}

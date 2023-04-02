@@ -1,0 +1,135 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Select Preferred Rooms</h1>
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary"> <%= sectionCode %> </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table  class="table text-center" id="dataTable" width="100%" cellspacing="0">
+                    <form action="./showrooms" method="get" id="getRoomForm">
+                        <input type="text" hidden name="sectionCode" value="<%= sectionCode %>">
+                    <tr>
+                        
+                        <th>Building</th>
+                        <td> 
+                            <% if (locals.building) { %>
+                                <%allBuildings.forEach((building2, i) => { %>
+                                    
+                                    <% if (building.includes(building2)) { %>
+                                        <input type="checkbox" name="building[]" id="<%= building2 %>" value="<%= building2 %>"  checked disabled >
+                                        <label class="pr-2" for="<%= building2 %>"><%= building2 %></label>
+                                    <% } else{ %>
+
+                                    <input type="checkbox" name="building[]" id="<%= building2 %>" value="<%= building2 %>"  disabled>
+                                    <label class="pr-2" for="<%= building2 %>"><%= building2 %></label>
+                                    <% } %>
+                                    <% }) %>
+                            <% } else {%>
+                         
+                            <%allBuildings.forEach((building, i) => { %>
+                                <input class="buildingCheckbox" type="checkbox" name="building[]" id="<%= building %>" value="<%= building %>" onclick="checkCheckBox(this)" >
+                                <label class="pr-2" for="<%= building %>"><%= building %></label>
+                                <% }) %>
+                                <% } %>
+                        </td>
+                       </tr>
+                       <tr>
+                        <th>Floor</th>
+                        <td>
+                            <% if (locals.floor) { %>
+                                <%allFloors.forEach((floor2, i) => { %>
+                                    
+
+                                    <% if (floor.includes(floor2)) { %>
+                                        <input class="floorCheckbox" type="checkbox" name="floor[]" id="<%= floor2 %>" value="<%= floor2 %>"  checked disabled >
+                                        <label class="pr-2" for="<%= floor2 %>"><%= floor2 %></label>
+                                    <% } else{ %>
+                                    <input class="floorCheckbox" type="checkbox" name="floor[]" id="<%= floor2 %>" value="<%= floor2 %>"  disabled>
+                                    <label class="pr-2" for="<%= floor2 %>"><%= floor2 %></label>
+                                    <% } %>
+                                    <% }) %>
+                            <% } else {%>
+                         
+                            <%allFloors.forEach((floor, i) => { %>
+                                <input class="floorCheckbox" type="checkbox" name="floor[]" id="<%= floor %>" value="<%= floor %>" onclick="checkCheckBox(this)" >
+                                <label class="pr-2" for="<%= floor %>"><%= floor %></label>
+                                <% }) %>
+                                <% } %>
+                        </td>
+                       </tr>
+                       <tr>
+                        <th>Rooms</th>
+                        <% if (locals.allAvailableRooms) { %>
+                            <% if (!allAvailableRooms.length) { %>
+                               <td><p>No Rooms Found!</p> <a  class="btn text-primary " id="returnBtn"  onclick="history.back()">  Return</a> </td>
+                                <% } else{%>
+
+                                   
+                            <td> <%allAvailableRooms.forEach((room, i) => { %>
+                                
+                                <input class="roomCheckbox" type="checkbox" name="rooms[]" id="<%= room.room_id  %>" value="<%= room.room_id %>" checked >
+                                <label class="pr-2" for="<%= room.room_id  %>"><%= room.room_id %></label>
+                                <% }) %>
+                                <br>
+                                <a  class="btn text-primary " id="returnBtn" onclick="history.back()">  Return</a> <button  class="btn text-primary " id="saveBtn" formaction="./addnewroompreference" type="submit">  Save</button>
+                            </td>
+                        
+                                <% } %>
+                                
+                        <% } else { %>
+
+                        <td class="text-center" > <a  class="btn text-primary " id="searchBtn" onclick="document.getElementById('getRoomForm').submit()">  Search</a></td> 
+                        <% } %>
+                       </tr>
+                    </form>
+                </table>
+                <!-- <div class="text-center">  <a href="" class="btn text-primary " id="saveBtn" >Save</a></div> -->
+               
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/facultyfooter') %>
+<script>
+
+    var buildingboxes = $('.buildingCheckbox');
+    var floorboxes = $('.floorCheckbox');
+    var roomboxes = $('.roomCheckbox');
+    
+    buildingboxes.on('change', function() {
+        $('.floorCheckbox').prop('disabled', !buildingboxes.filter(':checked').length);
+        if(!buildingboxes.filter(':checked').length)
+        {
+            $('.floorCheckbox').prop('checked',false);
+            $('#searchBtn').toggleClass('disabled', !floorboxes.filter(':checked').length);
+        }
+    }).trigger('change');
+
+
+    
+
+
+    floorboxes.on('change', function() {
+        $('#searchBtn').toggleClass('disabled', !floorboxes.filter(':checked').length);
+    }).trigger('change');
+    roomboxes.on('change', function() {
+        $('#saveBtn').toggleClass('disabled', !roomboxes.filter(':checked').length);
+    }).trigger('change');
+
+    $("#saveBtn").click(function(){
+        alert("Your Request has been sent");
+      });
+</script>
+
+
+

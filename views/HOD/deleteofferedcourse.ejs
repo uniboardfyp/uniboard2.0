@@ -1,0 +1,67 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Offer New Course</h1>
+<% if (locals.status) { %>
+    <% if (status[0] === 'E') { %>
+        <h4 class="text-center text-danger"><%= status %></h4>
+    <% } else{%>
+        <h4 class="text-center text-success"><%= status %></h4>
+        <% } %>
+        <% } else{%>
+            <h4 class="text-center text-success">&nbsp;</h4>
+            <% } %>
+    
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Courses</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table  class="table text-center" id="dataTable" width="100%" cellspacing="0">
+                   <form action="./deleteofferedcourse" method="POST">
+                    <tr>
+                        <th>
+                            Select
+                        </th>
+                        <th>
+                            Options
+                        </th>
+                    </tr>
+                    
+                    <tr>
+                        <th>
+                            Section Code
+                        </th>
+                        <td>
+                           <select class="btn btn-outline-primary" name="sectioncode" id="sectionCode" required >
+                            <option value="" disabled selected>Select</option>
+                            <% sectionCodes.forEach(section => { %>
+                                <option value="<%= section %>"> <%= section %> </option>
+                            <% }) %>
+                            
+                           </select> 
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <th> </th>
+                        <td><button class='btn btn-danger' type="submit">Delete Section</button></td>
+                        
+                    </tr>
+                    
+                   </form>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/HODfooter') %>
+

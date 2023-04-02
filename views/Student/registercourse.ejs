@@ -1,0 +1,84 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Register Course</h1>
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Register</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table  class="table text-center" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr  >
+                            <th >#</th>
+                            <th >Course Code</th>
+                            <th >Course Type</th>
+                            <th >Hours</th>
+                            <th >Course Name</th>
+                            <th >Section Code</th>
+                            <th >Faculty Name</th>
+                            <th >Time Slot </th>
+                            <th >Room</th>
+                            <th >Seats</th>
+                            <th>   </th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                        <%let i = 1; CoursesETR.forEach(function(course){ %>   
+                  <tr >
+                    <td class="align-middle"><%= i %></td>
+                    <% i++ %>
+                    <td class="align-middle" ><%=course.course_code%></td>
+                    <td class="align-middle"><%=course.course_type%></td>
+                   
+                    <td class="align-middle"><%=course.course_credithours%> + 0</td>
+                    <td class="align-middle"><%=course.course_title%></td>
+                    <td class="align-middle"><%=course.section_code%></td>
+                <% if(course.faculty_firstname === null){%>
+                    <td class="align-middle">Faculty Member</td>
+                    <% } else {%>
+                    <td class="align-middle"><%=course.faculty_firstname%> <%=course.faculty_lastname%></td>
+                    <% } %>
+                    <td class="align-middle"><%=course.slot_day%> <%=course.slot_time%></td>
+                    <% if(course.room_id === null){%>
+                        <td class="align-middle">TBD</td>
+                        <% } else {%>
+                    <td class="align-middle"><%=course.room_id%></td>
+                    <% } %>
+                    <td class="align-middle"><%=course.seats%></td>
+                    <td class="align-middle" ><% if(course.registered === false && course.seats >=1) {%><a class="link-primary text-decoration-none" href="./registernewcourse?sectioncode=<%=course.section_code%>&coursecode=<%=course.course_code%>"> 
+                      
+                      <button class="btn btn-outline-primary" onclick="registerCourse('<%=course.section_code%>')"> 
+                        <i
+                      class="fas fa-cart-plus"></i>
+                     </button></a>
+                  
+                     <% } else if (course.registered === true) { %>
+                      <a class="link-primary text-decoration-none" href="./unregistercourse?sectioncode=<%=course.section_code%>&coursecode=<%=course.course_code%>"> 
+                      <button class="btn btn-outline-danger" onclick="registerCourse('<%=course.section_code%>')"> 
+                        <i
+                      class="fas fa-minus-square"></i> </button></a>
+                      <% } else if (course.seats === 0 && course.registered === false) { %>
+                        
+                        <button class="btn btn-danger" > Locked </button>
+                      <% } %>
+                      
+                    </td>
+                  </tr>
+                  <% }); %>
+            </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/studentfooter') %>

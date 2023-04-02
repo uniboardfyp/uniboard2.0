@@ -1,0 +1,76 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Allot Faculty</h1>
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+            <% if (locals.status) { %>
+                <% if (status[0] === 'E') { %>
+                    <h4 class="text-center text-danger"><%= status %></h4>
+                <% } else{%>
+                    <h4 class="text-center text-success"><%= status %></h4>
+                    <% } %>
+                    <% } else{%>
+                        <h4 class="text-center text-success">&nbsp;</h4>
+                        <% } %>
+                
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Sections</h6>
+            
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table  class="table text-center" id="dataTable" width="100%" cellspacing="0">
+                    
+                    <% if (sectionDetails.length === 0) { %>
+                        <p>No Record Found</p>
+                        
+                       <% } else{ %>
+                    <thead>
+                        <tr>
+                            <th >#</th>
+                            <th >Section Code</th>
+                            <th>Select Faculty </th>
+                            <th></th>
+             
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                       
+                        <%sectionDetails.forEach((section, i) => { %>
+                            <form action="./allotfaculty" method="POST">
+                          <tr>
+                            <td> <%= i+1  %> </td>
+                            <td> <%= section.section_code %></td>
+                            <input type="text" name="sectionCode" hidden value="<%= section.section_code %>" >
+                            <td>
+                                <select class="btn btn-outline-primary" name="facultyID" id="facultyID" required >
+                                    <option value="" disabled selected>Select</option>
+                                    <% section.facultyDetails.forEach(faculty => { %>
+                                        <option value="<%= faculty.faculty_id %>"> <%= faculty.faculty_firstname %> <%= faculty.faculty_lastname %> <%= faculty.faculty_id %> </option>
+                                    <% }) %>
+                                    
+                                   </select> 
+                                   <td><button class='btn btn-success' type="submit">Save</button></td>
+                                 </td>
+                          </tr>
+                        </form>
+                        <% }) %>
+                        <% } %>
+                    
+            </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/facultyfooter') %>
+

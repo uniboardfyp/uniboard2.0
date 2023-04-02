@@ -1,0 +1,52 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Reuqest Preferred Rooms</h1>
+    <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+        For more information about DataTables, please visit the <a target="_blank"
+            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Your Courses</h6>
+            
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table  class="table text-center" id="dataTable" width="100%" cellspacing="0">
+                    <% if (sectionCode.length === 0) { %>
+                        <p>No Record Found</p>
+                        
+                       <% } else{ %>
+                    <thead>
+                        <tr>
+                            <th >#</th>
+                            <th >Section Code</th>
+                            <th> </th>
+             
+                        </tr>
+                    </thead>
+                   
+                    <tbody>
+                       
+                        <%sectionCode.forEach((section, i) => { %>
+                          <tr>
+                            <td> <%= i+1  %> </td>
+                            <td> <%= section.section_code %></td>
+                            <td> <a href="./requestroom?sectionCode=<%= section.section_code %>" class="btn btn-primary">Select</a> </td>
+                          </tr>
+                           
+                        <% }) %>
+                        <% } %>
+                        
+            </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/facultyfooter') %>
+

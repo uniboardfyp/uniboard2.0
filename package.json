@@ -1,0 +1,27 @@
+{
+  "name": "uniboard",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sfpy/checkout-components": "^0.1.0",
+    "bsecure": "^1.0.7",
+    "cookie-parser": "^1.4.6",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.1.2",
+    "nodemon": "^2.0.20",
+    "open": "^9.1.0",
+    "safepay": "^0.0.2",
+    "safepay-sdk": "^0.0.14"
+  },
+  "devDependencies": {},
+  "description": ""
+}
