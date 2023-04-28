@@ -1,0 +1,58 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid py-4 min-vh-100">
+    <input class="form-control mb-2 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Course"> 
+    <div class="table-responsive rounded">
+         
+      <div class="card rounded">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0 e table-group-divider">
+              <thead class=" text-white bg-gradient-primary">
+                <tr class="align-middle text-center">
+                    <th class="text-uppercase text-sm font-weight-bolder ">Course Code</th>
+                  <th class="text-uppercase text-sm font-weight-bolder ">Course Name</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder  ps-2">Course Type</th>
+                  <th class="text-uppercase text-sm font-weight-bolder ">Credit Hours</th>
+                
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                  <% AllDepartmentCourses.forEach(x => { %>
+                   
+                  
+                <tr class="align-middle text-center text-sm text-dark">
+  
+                    <td>
+                    
+                        
+                         <h6 class="mb-0 text-sm font-weight-bolder py-1 "> <%= x.course_code  %> </h6>
+                    
+                    
+                    </td>
+                    <td>
+                        <p class="text-sm font-weight-bold mb-0 "><%= x.course_title  %></p>
+                     
+                    </td> <td>
+                        <p class="text-sm font-weight-bold mb-0"><%= x.course_type  %></p>
+                       
+                      </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.course_credithours  %> + 0</p>
+                     
+                    </td>
+                    
+                   
+                
+                    
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+    </div>
+  
+    </div>
+    
+<%- include('partials/footer') %>

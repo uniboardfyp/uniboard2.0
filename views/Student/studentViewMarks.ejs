@@ -1,0 +1,188 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid py-4 min-vh-100">
+  <% if (!locals.selectedCourseCode) { %>
+    <form action="./viewmarks" method="get">
+     
+      <button class="btn btn-block disabled btn-github text-white text-md text-dark fw-bolder  mb-0">Session</button>
+      <div class="dropdown">
+      
+        <button class="btn btn-block btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <% if (!locals.selectedSemester) { %>
+          Select Semester
+          <% }else{ %>
+              <%= selectedSemester  %> 
+            <% }%>
+        </button>
+        <ul class="dropdown-menu d-block w-100 text-center" aria-labelledby="dropdownMenuButton">
+          <% semesters.forEach(x => { %>
+            <li><a class="dropdown-item fw-bolder " href="?selectedSemester=<%= x %>"> <%= x %> </a></li>
+          
+          <% }) %>
+        
+        </ul>
+      </div>
+    
+      <button class="btn btn-block disabled btn-github text-white text-md text-dark fw-bolder  mb-0">Course</button>
+      <div class="dropdown">
+      
+        <button class="btn btn-block btn-white dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+          <% if (!locals.selectedCourseCode) { %>
+          Select Course
+          <% }else{ %>
+              <%= selectedCourseCode  %> 
+            <% }%>
+        </button>
+       
+          <% if (locals.courses) { %>
+            <ul class="dropdown-menu d-block w-100 text-center" aria-labelledby="dropdownMenuButton2">
+              
+            <% courses.forEach(x => { %>
+              <li><a class="dropdown-item fw-bolder " href="?selectedSemester=<%= selectedSemester %>&selectedSectionCode=<%= x.section_code %>&selectedCourseTitle=<%= x.course_title %>&selectedCourseCode=<%= x.course_code %>"> <%= x.course_title %> </a></li>
+            
+                  
+                 
+            
+            <% }) %> </ul>
+          <% } %>
+         
+       
+      </div>
+
+  </form>
+  <% } %>
+  <% if (locals.selectedCourseCode) { %>
+    
+    <div class="table-responsive mt-3 rounded ">
+      <table class="table align-items-center mb-0 table-responsive-sm table-group-divider ">
+        <thead class="text-bg-info">
+          
+          <tr class="align-middle text-center">           
+            <th class="text-uppercase text-md font-weight-bolder bg-dark text-white " colspan="1">Section Code</th>
+            <th class="text-uppercase text-md font-weight-bolder  bg-gray-400" colspan="2"><%= selectedSectionCode  %> </th>
+
+          </tr>
+          <tr class="align-middle text-center">           
+            <th class="text-uppercase text-md font-weight-bolder bg-dark text-white " colspan="1">Course Title</th>
+            <th class="text-uppercase text-md font-weight-bolder bg-gray-400" colspan="2">
+                  
+               <%= selectedCourseTitle  %> 
+                <p class="text-sm text-primary fw-bolder mb-0"> <%= selectedCourseCode  %></p>
+           
+              
+              </th>
+
+          </tr>
+          <tr class="align-middle text-center  bg-dark bg-opacity-50 text-white">
+           
+            <th class="text-uppercase text-sm font-weight-bolder ">Assessment</th>
+            
+            <th class="text-uppercase text-sm font-weight-bolder  ">Total Marks</th>
+            
+            <th class="text-uppercase text-sm font-weight-bolder  ">Obtained Marks</th>
+             
+           
+           
+          </tr>
+        </thead>
+        <tbody class="bg-gray-100 text-bg-white ">
+          
+           
+          
+          <tr class="align-middle text-center text-sm ">
+  
+            
+             
+          
+            <td>
+              <p class="text-sm font-weight-bold mb-0"> Assignment </p>
+             
+            </td>
+           
+            <td>
+              <p class="text-sm font-weight-bolder mb-0">15</p>
+             
+            </td>
+            <td>
+              <p class="text-sm font-weight-bolder mb-0 text-primary"><%= marks[0].Assignment  %></p>
+             
+            </td>
+          
+            
+          </tr>
+          <tr class="align-middle text-center text-sm">
+  
+            
+             
+          
+            <td>
+              <p class="text-sm font-weight-bold mb-0"> Quiz </p>
+             
+            </td>
+           
+            <td>
+              <p class="text-sm font-weight-bolder mb-0">15</p>
+             
+            </td>
+            <td>
+              <p class="text-sm font-weight-bolder mb-0 text-primary"><%= marks[0].Quiz  %></p>
+             
+            </td>
+          
+            
+          </tr>
+          <tr class="align-middle text-center text-sm">
+  
+            
+             
+          
+            <td>
+              <p class="text-sm font-weight-bold mb-0"> Mid Term </p>
+             
+            </td>
+           
+            <td>
+              <p class="text-sm font-weight-bolder mb-0">30</p>
+             
+            </td>
+            <td>
+              <p class="text-sm font-weight-bolder mb-0 text-primary"><%= marks[0].MidTerm  %></p>
+             
+            </td>
+          
+            
+          </tr>
+          <tr class="align-middle text-center text-sm">
+  
+            
+             
+          
+            <td>
+              <p class="text-sm font-weight-bold mb-0"> Final </p>
+             
+            </td>
+           
+            <td>
+              <p class="text-sm font-weight-bolder mb-0">40</p>
+             
+            </td>
+            <td>
+              <p class="text-sm font-weight-bolder mb-0 text-primary"><%= marks[0].Final  %></p>
+             
+            </td>
+          
+            
+          </tr>
+            
+        </tbody>
+      </table>
+      <div class="text-end mr-2 mt-2">
+        <a href="./viewmarks" class="btn btn-danger text-end mr-3">Return</a>
+       
+      </div>
+    </div>
+    <% }%>
+  
+
+  
+  
+<%- include('partials/footer') %>

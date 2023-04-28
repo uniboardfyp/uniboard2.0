@@ -1,0 +1,109 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid py-4 min-vh-100">
+  <% if(locals.mes){ %>
+    <div class="alert bg-danger text-white fw-bold  alert-dismissible fade show" role="alert">
+      <% if (mes == 1 ) { %>
+        <strong> Max Course Limit Reached! </strong> 
+      <% } else if(mes == 2){ %>
+        <strong> Seats Full!</strong> 
+        <% } else if(mes == 3){ %>
+          <strong> Course Already Registered! </strong> 
+          <% } else if(mes == 4){ %>
+            <strong> Section Time Clash! </strong> 
+            <% } %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+    </div>
+    <% } %>
+  <input class="form-control mb-2 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Offered Courses"> 
+       
+    <div class="card bg-white">
+        <div class="table-responsive rounded">
+          <table class="table  align-items-center mb-0  table-sm">
+            <thead class="table-dark  text-bg-dark ">
+              <tr class="align-middle text-center">
+                <th class="text-uppercase  text-xs font-weight-bolder  w-2">Sr No.</th>
+                <th class="text-uppercase text-xs font-weight-bolder ">Course Title</th>
+                <th class="text-uppercase text-xs font-weight-bolder ">Course Type</th>
+                <th class="text-uppercase text-xs font-weight-bolder w-2">Hours (TH) + (PR)</th>
+                <th class="text-uppercase text-xs font-weight-bolder  ">Section Code</th>
+                <th class="text-center text-uppercase text-xs font-weight-bolder ">Faculty Name</th>
+                
+                <th class="text-center text-uppercase text-xs font-weight-bolder ">Time Slot</th>
+                <th class="text-center text-uppercase text-xs font-weight-bolder w-2">Seats</th>
+                <th class=""></th>
+               
+               
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              <% activeCourses.forEach((course,i) => { %>
+               
+              
+              <tr class="align-middle text-center text-sm">
+
+                <td >
+                  <span class="font-weight-bold "> <%= i+1 %> </span>
+                </td>
+                  <td>
+                  
+                      
+                      <div class="d-flex flex-column justify-content-center px-2 py-2">
+                        <h6 class="mb-0 text-sm "> <%= course.course_title  %> </h6>
+                        <p class="text-xs text-secondary mb-0"><%= course.course_code  %></p>
+                      </div>
+                  
+                  </td>
+                  <td>
+                    <p class="text-sm font-weight-bold mb-0"><%= course.course_type  %></p>
+                   
+                  </td>
+                  <td>
+                    <p class="text-sm font-weight-bold mb-0 "><%= course.course_credithours  %> + 0</p>
+                   
+                  </td>
+                  <td>
+                    <p class="text-sm font-weight-bold mb-0"><%= course.section_code  %></p>
+                   
+                  </td>
+                  <td>
+                    <% if (course.faculty_firstname) { %>
+                      <p class="text-sm font-weight-bold mb-0"><%= course.faculty_firstname  %> <%= course.faculty_lastname  %></p>
+                    <% }else{ %>
+                    <p class="text-sm font-weight-bold mb-0">Faculty Member</p>
+                    <% }%>
+                  </td>
+                  <td>
+                    <div class="d-flex flex-column justify-content-center px-2 py-2">
+                      <h6 class="mb-0 text-sm "> <%= course.slot_day  %> </h6>
+                      <p class="text-xs text-secondary mb-0"><%= course.slot_time  %></p>
+                    </div>
+                   
+                  </td>
+                  <td>
+                    <span class="font-weight-bold "> <%= course.seats %> </span>
+                  </td>
+                  <td class="align-middle text-center text-sm">
+                    <% if (course.registered) { %>
+                      <form action="./unregistercourse" method="post">
+                        <input type="text" hidden name="courseCode" value="<%= course.course_code  %>">
+                        <button type="submit" class="btn-xs text-center  mt-2 btn btn-danger" value="<%= course.encryptedValue %>" name="sectionCode"> &nbsp;&nbsp;  Drop <i class="fa fa-minus-square"></i> &nbsp;&nbsp;</button>
+                      </form>
+                    <% } else if(!course.seats){ %>
+                      <button  class="btn-xs text-center disabled  mt-2 btn btn-danger" >Locked <i class="fa fa-lock"></i></button>
+                      <% }else{ %>
+                    <form action="./registercourse" method="post">
+                     
+                    <button type="submit" class="btn-xs text-center  mt-2 btn btn-success" value="<%= course.encryptedValue %>" name="sectionCode">Register <i class="fa fa-plus-square"></i></button>
+                  </form>
+                  <% } %>
+                  </td>
+                  
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+ 
+<%- include('partials/footer') %>

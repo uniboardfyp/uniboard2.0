@@ -1,0 +1,78 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4 min-vh-80">
+    <% if (!inProgSecData.length) { %>
+      <div class="alert alert-primary text-white border-0 " role="alert">
+          <strong>No Record Found </strong> 
+      </div>
+     <% } else{ %>
+      <div class="table-responsive">
+           
+        <div class="card">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0 table-group-divider">
+                <thead class=" text-white bg-default">
+                  <tr class="align-middle text-center">
+                   
+                    <th class="text-uppercase text-sm font-weight-bolder ">Course Title</th>
+                    
+                    <th class="text-uppercase text-sm font-weight-bolder  ">Section Code</th>
+                    <th class="text-uppercase text-sm font-weight-bolder  ">Semester</th>
+                    
+                    <th class="text-uppercase text-sm font-weight-bolder "> </th>
+                   
+          
+                   
+                   
+                  </tr>
+                </thead>
+                <tbody id="myTable">
+                    <% inProgSecData.forEach(x => { %>
+                     
+                    
+                  <tr class="align-middle text-center text-sm">
+    
+                      <td>
+                      
+                          
+                          <div class="d-flex flex-column justify-content-center px-2 py-2">
+                            <h6 class="mb-0 text-sm "> <%= x.course_title  %> </h6>
+                            <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                          </div>
+                      
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0"><%= x.section_code  %></p>
+                       
+                      </td>
+                   
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0"><%= x.semester_name  %></p>
+                       
+                      </td>
+                      <td>
+                     
+                        <a class="btn btn-info text-bg-info  " href="./uploadattendance?sectionCode=<%=x.section_code%>">Select <i class="fas fa-edit"></i></a>
+                       
+                        
+                       
+                      </td>
+                     
+                     
+                    </tr>
+                    <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+    
+      </div>
+      <% } %>
+      </div>
+<%- include('partials/footer') %>
+
+
+
+
+
+
+

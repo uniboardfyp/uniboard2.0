@@ -1,0 +1,74 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid py-4 min-vh-100">
+
+    <% if(locals.facultyID){ %>
+        <div class="alert bg-success text-bg-success fw-bold  alert-dismissible fade show" role="alert">
+            <strong> Section Code : <%= sectionCode %> Aloted to Faculty: <%= facultyID %> </strong> 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+        </div>
+        <% } %>
+
+    <input class="form-control mb-2 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Course"> 
+   
+    
+          <div class="card table-responsive">
+                <table  class="table   text-center align-items-center mb-0 rounded " >
+                    <thead class=" " style="background-color: rgb(12, 182, 182); color: black;">
+                        <tr  >
+                            <th class="text-uppercase text-sm font-weight-bolder " >Course Title</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Section Code</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Faculty</th>
+                            <th class="text-uppercase text-sm font-weight-bolder "> </th>
+                            
+                        </tr>
+                    </thead>
+                   
+                    <tbody id="myTable" class=" bg-white" >
+                        <% facultyRequests.forEach(function(x){ %>   
+                  <tr class="align-middle">
+                  
+                    <td>
+             
+               
+              
+                  
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                          <h6 class="mb-0 text-sm "> <%= x.course_title  %> </h6>
+                          <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                        </div>
+                    
+                    </td>
+                   
+                 
+                    <td class="text-sm font-weight-bold text-dark" ><%=x.section_code%></td>
+                    <td> <div class="d-flex flex-column justify-content-center px-2 py-2">
+                        <h6 class="mb-0 text-sm "><%=x.faculty_firstname%> <%=x.faculty_lastname%> </h6>
+                        <p class="text-xs text-secondary mb-0"><%= x.faculty_id  %></p>
+                      </div></td>
+                   
+                  
+                   
+
+                    <td>
+                        <form action="./acceptfacultyreq" method="post">
+                            <input type="text" class="d-none" name="sectionCode" value="<%=x.section_code%>"> 
+                            <input type="text" class="d-none" name="facultyID" value="<%=x.faculty_id%>">
+                        <button class='btn btn-sm  btn-success' type="submit">Accept</button>
+                    </form>
+                    
+                    <form action="./rejectfacultyreq" method="post">
+                        <input type="text" class="d-none" name="sectionCode" value="<%=x.section_code%>"> 
+                        <input type="text" class="d-none" name="facultyID" value="<%=x.faculty_id%>">
+                    <button class='btn btn-sm  btn-danger' type="submit">Reject</button>
+                </form>   
+                </td>
+                    
+                  </tr>
+                  <% }); %>
+            </tbody>
+                </table>
+          
+            </div>  
+    </div>
+    
+<%- include('partials/footer') %>

@@ -1,0 +1,67 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid">
+    <input class="form-control mb-4 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Room"> 
+   
+    <div class="card shadow bg-light">
+       
+        <div class="card-body p-0 ">
+            <div class="table-responsive">
+                <table  class="table  text-center text-sm table-hover " id="dataTable" style="border: rgba(255, 255, 255, 0) 0px; cursor: context-menu;">
+                    <thead class="text-white bg-opacity-75 bg-default"  >
+                        <tr  >
+                            
+                            <th colspan="2" class="w-auto">Room Details</th>
+                            
+                            <% allSlots.forEach(function(slot){ %> 
+                            <th  class="align-middle w-auto" ><%=slot.slot_day%> 
+                           </th>
+                            <% }); %>
+
+                        </tr>
+                        <tr>
+                          
+                            <th class="w-auto">Room Number</th><th class="w-auto">Type</th>
+                            <% allSlots.forEach(function(slot){ %> 
+                                <th  class="align-middle w-auto text-xs" ><%=slot.slot_time%> 
+                               </th>
+                                <% }); %>
+                        </tr>
+                    </thead>
+                   
+                    <tbody id="myTable" class="font-weight-bold" >
+                        <%  freeRoomsData.forEach(function(room){ %>
+                            <tr>
+                       
+                        <td class="align-middle w-auto"> <%=room.room_id%> </td>
+                        
+                        <td class="align-middle w-auto"> <%=room.room_type%> </td>
+
+                        <% for( let index = 0; index < allSlots.length; index++ ) { %>
+                        <td class="align-middle w-auto"><i class="fas fa-check-circle text-success fa-lg"></i></td>
+                        <% } %>
+                    </tr>
+                        <% }); %>
+                        <% bookedRoomsData.forEach(function(room){ %>
+                            <tr>
+                           
+                            <td class="align-middle w-auto w-auto" > <%=room.room_id%> </td>
+                            <td class="align-middle w-auto"> <%=room.room_type%> </td>
+    
+                            <% allSlots.forEach(function(slot){ %>
+                                <% if (room.slot_id.includes(slot.slot_id) ) { %>
+                                    
+                                    <td class="align-middle w-auto"><i class="fas fa-times-circle text-danger fa-lg"></i></td>
+                                <% } else{ %>
+                                    <td class="align-middle w-auto"><i class="fas fa-check-circle text-success fa-lg"></i></td>
+                                    <% } %>
+                                <% }); %>
+                        </tr>
+                            <% }); %>
+            </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,56 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid mt-4">
+
+   <% if (locals.secCode) { %>
+    <div class="alert alert-danger text-white border-0 fw-bold  alert-dismissible fade show" role="alert">
+    Room Request For Section:     <strong> <%= secCode %>  Deleted Successfully!</strong> 
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+    </div>
+   <% } %>
+   <% if (!sectionCodes.length) { %>
+    <div class="alert alert-primary text-white border-0" role="alert">
+        <strong>No Record Found </strong> 
+    </div>
+   <% } else{ %>
+    
+        
+        
+            <div class="table-responsive rounded ">
+                <table  class="table  text-center font-weight-bold " id="dataTable" >
+                    <thead class="bg-danger text-white border-0 " >
+                        <tr  >
+                            <th  >#</th>
+                            <th  >Section Code</th>
+                            <th  >Preferred Rooms</th>
+                            <th  > </th>
+                            
+                        </tr>
+                    </thead>
+                   
+                  <tbody class="text-bg-light table-group-divider" >
+                   
+                    <% sectionCodes.forEach((section,i) => { %>
+                        <tr >
+                            <td > <%= i+1 %> </td>
+                            <td > <%= section  %> </td>
+                            <td >
+                    <% roomRequestData.forEach(preferred => { %>
+                        <% if (preferred.section_code === section) { %>
+                             <p class="d-inline-block px-2"> <i class="fa fa-chevron-circle-right"></i> <%= preferred.room_id %> </p> 
+                        <% } %>
+
+                        
+                    <% }) %>
+                </td>
+                <td > <a onclick="if(confirm('Delete Request For Section: <%=section%>')){}else{return false;};" href="./deleterequestroom?sectionCode=<%= section %>" class="btn btn-xs btn-danger "  > Delete Request <i class="fa fa-minus-square"></i></a> </td>
+                </tr>
+                    <% }) %>
+                
+                  </tbody>
+                </table>
+            </div>
+        
+    
+    <% }  %>
+</div>
+<%- include('partials/footer') %>

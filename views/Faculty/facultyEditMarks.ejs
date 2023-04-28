@@ -1,0 +1,117 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4">
+    
+    <% if (locals.mes) { %>
+        <div class="alert alert-success text-white border-0 fw-bold  alert-dismissible fade show" role="alert">
+            Saved Marks for Section <strong> <%= sectionCode %> </strong> 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+        </div>
+       <% } %>
+    <% if (!allSectionData.length) { %>
+      <div class="alert alert-primary text-white border-0" role="alert">
+          <strong>No Record Found </strong> 
+      </div>
+     <% } else{ %>
+      <div class="table-responsive table-hover">
+           
+        <div class=" rounded-pill">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0 table-group-divider">
+                <thead class=" text-white bg-default">
+                    <tr class="align-middle text-center">
+                       <th class="text-uppercase text-sm font-weight-bolder bg-info rounded-top text-bg-info  " colspan="6"> <%= sectionCode  %></th>
+                    </tr>
+                  <tr class="align-middle text-center">
+                   
+                    <th class="text-uppercase text-sm font-weight-bolder " colspan="2">Student Data</th>
+                    <th class="text-uppercase text-sm font-weight-bolder bg-dark" colspan="4">Assessments</th>
+                  </tr>
+                  <tr class="align-middle text-center">
+                    <th class="text-uppercase text-sm font-weight-bolder  ">Student ID</th>
+                    <th class="text-uppercase text-sm font-weight-bolder  ">Student Name</th> 
+                    <th class="text-uppercase text-sm font-weight-bolder bg-dark">Assignment (15)</th>
+                    
+                    <th class="text-uppercase text-sm font-weight-bolder bg-dark">Quiz (15) </th>
+                    
+                    <th class="text-uppercase text-sm font-weight-bolder bg-dark ">Mid Term (30) </th>
+                    <th class="text-uppercase text-sm font-weight-bolder bg-dark  ">Final Marks (40)</th>
+                  
+                  </tr>
+                </thead>
+                <tbody id="myTable" class="bg-white">
+                    <form action="./editmarks" method="post">
+                        <input type="text" hidden name="sectionCode" value="<%= sectionCode  %>">
+                    <% allSectionData.forEach(x => { %>
+                     
+                    
+                  <tr class="align-middle text-center text-sm">
+    
+                      <td>
+                      
+                          <input type="text" class="text-center"  name="studentID[]" hidden value="<%= x.student_id  %>" >
+                          <div class="d-flex flex-column justify-content-center px-2 py-2">
+                            <h6 class="mb-0 text-sm font-weight-bolder"> <%= x.student_id  %> </h6>
+                          </div>
+                      
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bolder mb-0 text-gray-900"><%= x.student_firstname  %> <%= x.student_lastname  %></p>
+                       
+                      </td>
+                   
+                      <td>
+                        <% if (x.Assignment === null) { %>
+                            <input type="number" class="text-center fw-bold"  name="Assignment[]" step="0.01" min="0" max="15" class="text-sm font-weight-bold mb-0" value="0.00" > 
+                        <% } else{ %>
+
+                        <input type="number"  class="text-center fw-bold" step="0.01" min="0" max="15" class="text-sm font-weight-bold mb-0" name="Assignment[]" value="<%= x.Assignment  %>" >
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.Quiz === null) { %>
+                            <input type="number" class="text-center fw-bold" name="Quiz[]"  step="0.01" min="0" max="15" class="text-sm font-weight-bold mb-0"  value="0.00"> 
+                        <% } else{ %>
+
+                        <input type="number" class="text-center fw-bold" name="Quiz[]" step="0.01" min="0" max="15" class="text-sm font-weight-bold mb-0"  value="<%= x.Quiz  %>">
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.MidTerm === null) { %>
+                            <input type="number" class="text-center fw-bold" name="Midterm[]" step="0.01" min="0" max="30" class="text-sm font-weight-bold mb-0"  value="0.00"> 
+                        <% } else{ %>
+
+                        <input type="number" class="text-center fw-bold" name="Midterm[]" step="0.01" min="0" max="30" class="text-sm font-weight-bold mb-0"  value="<%= x.MidTerm  %>">
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.Final === null) { %>
+                            <input type="number" class="text-center fw-bold" name="Final[]" step="0.01" min="0" max="40" class="text-sm font-weight-bold mb-0"  value="0.00"> 
+                        <% } else{ %>
+
+                        <input type="number" class="text-center fw-bold" name="Final[]" step="0.01" min="0" max="40" class="text-sm font-weight-bold mb-0" value="<%= x.Final  %>">
+                        <% }%>
+                      </td>
+                     
+                     
+                     
+                    </tr>
+                    <% }) %>
+                  
+              
+                </tbody>
+              </table>
+             
+              <div class="text-end mr-2 mt-2">
+                <a href="./uploadmarks" class="btn btn-danger text-end mr-3">Return</a>
+                <button type="submit" class="btn btn-success text-end">Save</button>
+              </div>
+              
+            </form>
+            </div>
+            
+          </div>
+    
+      </div>
+      <% } %>
+      </div>
+<%- include('partials/footer') %>

@@ -1,0 +1,85 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid py-4 min-vh-100">
+    <input class="form-control mb-2 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Course"> 
+    <div class="table-responsive rounded">
+         
+      <div class="card rounded">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0 e table-group-divider">
+              <thead class=" text-white bg-gradient-primary">
+                <tr class="align-middle text-center">
+                 
+                  <th class="text-uppercase text-sm font-weight-bolder ">Course Title</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder  ps-2">Section Code</th>
+                  <th class="text-uppercase text-sm font-weight-bolder ">Credit Hours</th>
+                  <th class="text-uppercase text-sm font-weight-bolder ">Time Slot</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder ">Room</th>
+                  <th class="text-uppercase text-sm font-weight-bolder ">Faculty</th>
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                  <% AllOfferedCourses.forEach(x => { %>
+                   
+                  
+                <tr class="align-middle text-center text-sm">
+  
+                    <td>
+                    
+                        
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                          <h6 class="mb-0 text-sm "> <%= x.course_title  %> </h6>
+                          <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                        </div>
+                    
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.section_code  %></p>
+                     
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.course_credithours  %> + 0</p>
+                     
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                            <h6 class="mb-0 text-sm "> <%= x.slot_day  %> </h6>
+                            <p class="text-xs text-secondary mb-0"><%= x.slot_time  %></p>
+                          </div>
+                    
+                     
+                    </td>
+                    <td>
+                        <% if(x.room_id){%>
+                      <p class="text-sm font-weight-bold mb-0"> <%=x.room_id  %> </p>
+                     <% } else { %>
+                        <p class="text-sm font-weight-bold mb-0"> TBD </p>
+                        <% }%>
+                    </td>
+                    <td>
+                        <% if(x.faculty_id){%>
+                            <div class="d-flex flex-column justify-content-center px-2 py-2">
+                                <h6 class="mb-0 text-sm "> <%= x.faculty_firstname %> <%= x.faculty_lastname %>  </h6>
+                                <p class="text-xs text-secondary mb-0"><%= x.faculty_id  %></p>
+                              </div>
+                           <% } else { %>
+                              <p class="text-sm font-weight-bold mb-0"> TBD </p>
+                              <% }%>
+                       
+                    
+                     
+                    </td>
+                    
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+    </div>
+  
+    </div>
+    
+<%- include('partials/footer') %>

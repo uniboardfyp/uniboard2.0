@@ -1,0 +1,73 @@
+<%- include('partials/studenthead') %>
+
+ <div class="container-fluid min-vh-100 py-4">
+      
+        
+          <div class="card">
+           
+            <div class="card-body">
+              <p class="text-uppercase text-sm">User Information</p>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Student ID </label>
+                    <input disabled class="form-control" type="text" value="<%= username  %> ">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Email address</label>
+                    <input disabled class="form-control text-lowercase" type="email" value="<%= firstname  %>.<%= lastname  %>@gmail.com">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">First name</label>
+                    <input disabled class="form-control" type="text" value="<%= firstname  %> ">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Last name</label>
+                    <input disabled class="form-control" type="text" value="<%= lastname  %> ">
+                  </div>
+                </div>
+              </div>
+              <hr class="horizontal dark">
+              <p class="text-uppercase text-sm">Contact Information</p>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Address</label>
+                    <input disabled class="form-control" type="text" value="Bahria Town Karachi Street 9 House No. 4">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">City</label>
+                    <input disabled class="form-control" type="text" value="Karachi">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Country</label>
+                    <input disabled class="form-control" type="text" value="Pakistan">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Postal code</label>
+                    <input disabled class="form-control" type="text" value="72308">
+                  </div>
+                </div>
+              </div>
+             
+            </div>
+          </div>
+        
+     
+      
+  
+    </div>
+  
+<%- include('partials/footer') %>

@@ -1,0 +1,103 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4">
+    <% if (!allSectionData.length) { %>
+      <div class="alert alert-primary text-white border-0" role="alert">
+          <strong>No Record Found </strong> 
+      </div>
+     <% } else{ %>
+      <div class="table-responsive">
+           
+        <div class="rounded-pill">
+            <div class="table-responsive">
+              <table class="table align-items-center mb-0 table-group-divider">
+                <thead class=" text-white bg-default">
+                  <tr class="align-middle text-center">
+                     <th class="text-uppercase text-sm font-weight-bolder bg-info rounded-top text-bg-info  " colspan="6"> <%= sectionCode  %></th>
+                  </tr>
+                <tr class="align-middle text-center">
+                 
+                  <th class="text-uppercase text-sm font-weight-bolder " colspan="2">Student Data</th>
+                  <th class="text-uppercase text-sm font-weight-bolder bg-dark" colspan="4">Assessments</th>
+                </tr>
+                <tr class="align-middle text-center">
+                  <th class="text-uppercase text-sm font-weight-bolder  ">Student ID</th>
+                  <th class="text-uppercase text-sm font-weight-bolder  ">Student Name</th> 
+                  <th class="text-uppercase text-sm font-weight-bolder bg-dark">Assignment (15)</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder bg-dark">Quiz (15) </th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder bg-dark ">Mid Term (30) </th>
+                  <th class="text-uppercase text-sm font-weight-bolder bg-dark  ">Final Marks (40)</th>
+                
+                </tr>
+              </thead>
+                <tbody id="myTable" class="bg-white">
+                    <% allSectionData.forEach(x => { %>
+                     
+                    
+                  <tr class="align-middle text-center text-sm">
+    
+                      <td>
+                      
+                          
+                          <div class="d-flex flex-column justify-content-center px-2 py-2">
+                            <h6 class="mb-0 text-sm "> <%= x.student_id  %> </h6>
+                            <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                          </div>
+                      
+                      </td>
+                      <td>
+                        <p class="text-sm font-weight-bold mb-0"><%= x.student_firstname  %> <%= x.student_lastname  %></p>
+                       
+                      </td>
+                   
+                      <td>
+                        <% if (x.Assignment === null) { %>
+                            <p class="text-sm font-weight-bold mb-0"> 0.00 </p>
+                        <% } else{ %>
+
+                        <p class="text-sm font-weight-bold mb-0"><%= x.Assignment  %></p>
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.Quiz === null) { %>
+                            <p class="text-sm font-weight-bold mb-0"> 0.00 </p>
+                        <% } else{ %>
+
+                        <p class="text-sm font-weight-bold mb-0"><%= x.Quiz  %></p>
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.MidTerm === null) { %>
+                            <p class="text-sm font-weight-bold mb-0"> 0.00 </p>
+                        <% } else{ %>
+
+                        <p class="text-sm font-weight-bold mb-0"><%= x.MidTerm  %></p>
+                        <% }%>
+                      </td>
+                      <td>
+                        <% if (x.Final === null) { %>
+                            <p class="text-sm font-weight-bold mb-0"> 0.00 </p>
+                        <% } else{ %>
+
+                        <p class="text-sm font-weight-bold mb-0"><%= x.Final  %></p>
+                        <% }%>
+                      </td>
+                     
+                     
+                     
+                    </tr>
+                    <% }) %>
+                </tbody>
+              </table>
+              <div class="text-end mr-2 mt-2">
+                <a href="./uploadmarks" class="btn btn-danger text-end mr-3">Return</a>
+               
+              </div>
+            </div>
+          </div>
+    
+      </div>
+      <% } %>
+      </div>
+<%- include('partials/footer') %>

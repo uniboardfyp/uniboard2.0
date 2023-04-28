@@ -1,0 +1,90 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid py-4 min-vh-100">
+  <% if (!locals.selectedCourse) { %>
+    <form action="./viewmarks" method="get">
+     
+      <button class="btn  disabled btn-github text-white text-md text-dark fw-bolder  mb-0">Session</button>
+      <div class="dropdown">
+      
+        <button class="btn  btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <% if (!locals.selectedSection) { %>
+          Select Course
+          <% }else{ %>
+            <%= selectedSection  %> ||  <%= courseTitle  %> 
+            <% }%>
+        </button>
+        <ul class="dropdown-menu  text-center" aria-labelledby="dropdownMenuButton">
+          <% if (locals.courses) { %>
+            <% courses.forEach(x => { %>
+              <li><a class="dropdown-item fw-bolder " href="?sectionCode=<%= x.section_code %>&courseTitle=<%= x.course_title %>"> <%= x.section_code %> || <%= x.course_title %> </a></li>
+            
+            <% }) %>
+          
+          <% } %>
+         
+        </ul>
+      </div>
+  </form>
+  <% } %>
+  <% if (locals.selectedSection) { %>
+    
+    <div class="table-responsive ">
+      <table class="   table align-items-center mb-0 table-responsive-sm table-group-divider">
+        <thead class="bg-info text-bg-light ">
+          <tr class="align-middle text-center">
+           
+            <th class="text-uppercase text-xs font-weight-bolder ">Course Title</th>
+            <th class="text-uppercase text-xs font-weight-bolder  ">Section Code</th>
+            <th class="text-uppercase text-xs font-weight-bolder  ">Date</th>
+            <th class="text-uppercase text-xs font-weight-bolder  ">Status</th>
+             
+           
+           
+          </tr>
+        </thead>
+        <tbody class="bg-white text-bg-white"> 
+          <% studentAttendance.forEach(x => { %>
+          <tr class="align-middle text-center text-sm">
+  
+           
+              <td>
+             
+               
+              
+                  
+                  <div class="d-flex flex-column justify-content-center px-2 py-2">
+                    <h6 class="mb-0 text-sm "> <%= courseTitle  %> </h6>
+                  
+                  </div>
+              
+              </td>
+              
+              <td>
+                <p class="text-sm font-weight-bold mb-0"><%= x.section_code  %></p>
+               
+              </td>
+             
+              <td>
+                <p class="text-sm font-weight-bold mb-0"><%= x.date  %></p>
+               
+              </td> <td>
+                <p class="text-sm font-weight-bold mb-0"><%= x.status  %></p>
+               
+              </td>
+              
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+      <div class="text-center mx-auto mt-2">
+        <span class="badge badge-pill badge-info text-uppercase  text-sm">Total Classes : <%= totalClasses  %> </span>
+        <span class="badge badge-pill badge-success text-uppercase  text-sm">Classes Attended : <%= totalPresents  %> </span>
+        <span class="badge badge-pill badge-danger text-uppercase  text-sm">Absents : <%= totalAbsents  %></span>
+      </div>
+    </div>
+    <% }%>
+  
+
+  
+  
+<%- include('partials/footer') %>

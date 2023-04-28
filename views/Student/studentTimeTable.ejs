@@ -1,0 +1,60 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid py-4 min-vh-100">
+    <div class="cards">
+         <div class="table-responsive rounded">
+          <table class="table align-items-center mb-0 text-center ">
+            <thead class="bg-white">
+              <tr >
+                <th class="table-info text-bg-info text-uppercase text-xs font-weight-bolder "> </th>
+                <% slotDays.forEach(day => { %>
+                  <th class="table-info text-bg-info text-center text-uppercase  text-xs font-weight-bolder "> <%= day.slot_day %>  </th>
+                <% }) %>
+               
+               
+              </tr>
+              <% let flag = false; %>
+              <% slotTime.forEach(time => { %>
+              <tr>
+                <th  class="table-info text-bg-info text-uppercase text-sm font-weight-bolder "> <%= time.slot_time %> </th>
+                <% slotDays.forEach(day => { %>
+                  <% flag = false; %>
+                  <% inProgSections.forEach(sec => { %>
+                   <% if (sec.slot_day === day.slot_day) { %>
+                    <% if (sec.slot_time === time.slot_time) { %>
+                      <% flag = true %>
+                      <td>
+                    
+                        
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                          <h6 class="mb-0 text-sm "> <%= sec.course_title%> </h6>
+                          <p class="text-sm text-secondary mb-0"> <%= sec.course_code%> </p>
+                        </div>
+                    
+                    </td>
+                      <% } %>
+                   <% } %>
+                  <% }) %>
+                  <% if (!flag) { %>
+                <td>
+                    
+                        
+                  <div class="d-flex flex-column justify-content-center px-2 py-2">
+                    <h6 class="mb-0 text-sm "> </h6>
+                    <p class="text-sm text-secondary mb-0"> </p>
+                  </div>
+              
+              </td>
+              <% } %>
+              <% }) %>
+              </tr>
+              <% }) %>
+               
+             
+            </thead>
+         
+          </table>
+        </div>
+      </div>
+
+  </div>
+<%- include('partials/footer') %>

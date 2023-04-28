@@ -1,0 +1,159 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4">
+  <% if (locals.mes) { %>
+    <div class="alert bg-success text-bg-success fw-bold  alert-dismissible fade show" role="alert">
+      <strong> Room Request For Section: <%= sectionCode2 %> Sent Successfully! </strong> 
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+  </div>
+  <% } %>
+  <% if (!courses.length) { %>
+    <div class="alert alert-primary text-white border-0" role="alert">
+        <strong>No Record Found </strong> 
+    </div>
+   <% } else{ %>
+    <div class="table-responsive">
+         
+      <div class="card">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0 table-group-divider">
+              <thead class=" text-white bg-gradient-primary">
+                <tr class="align-middle text-center">
+                 
+                  <th class="text-uppercase text-sm font-weight-bolder ">Course Title</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder ">Section Code</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder ">Time Slot</th>
+                  <th class="text-uppercase text-sm font-weight-bolder "></th>
+        
+                 
+                 
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                  <% courses.forEach(x => { %>
+                   
+                  
+                <tr class="align-middle text-center text-sm">
+  
+                    <td>
+                    
+                        
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                          <h6 class="mb-0 text-sm "> <%= x.course_title  %> </h6>
+                          <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                        </div>
+                    
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.section_code  %></p>
+                     
+                    </td>
+                 
+                    <td>
+                        <div class="d-flex flex-column justify-content-center px-2 py-2">
+                            <h6 class="mb-0 text-sm "> <%= x.slot_day  %> </h6>
+                            <p class="text-xs text-secondary mb-0"><%= x.slot_time  %></p>
+                          </div>
+                     
+                    </td>
+                   
+                    <td>
+                        <form action="./requestroom"  >
+                            <input type="text" hidden value="<%= x.section_code  %>" name="sectionCode">
+                            <% if (locals.sectionCode) { %>
+                              <% if (sectionCode === x.section_code) { %>
+                            
+                            <% if (locals.allBuildings) { %>
+                              <p class="font-weight-bold text-white bg-primary rounded-pill">Choose Buildings</p>
+                              <% allBuildings.forEach(building => { %>
+
+                                <% if (locals.building) { %>
+                                  <% if (locals.building.includes(building) ) { %>
+                                    <input id=" <%= building %> " type="checkbox" value="<%= building %>" name="building[]" onchange="this.form.submit()" checked>
+                                    <label for=" <%= building %> " class="text-sm"> <%= building %> </label>
+                                  <% } else{ %>
+                                  <input id=" <%= building %> " type="checkbox" value="<%= building %>" name="building[]" onchange="this.form.submit()">
+                                  <label for=" <%= building %> " class="text-sm"> <%= building %> </label>
+                                  <% } %>
+                                <% } else{ %>
+                                  <input id=" <%= building %> " type="checkbox" value="<%= building %>" name="building[]" onchange="this.form.submit()">
+                                  <label for=" <%= building %> " class="text-sm"> <%= building %> </label>
+                                  <% } %>
+
+                                
+                                <% }) %>
+                                <br>
+                              <% if (locals.Allfloors) { %>
+                                <p class="font-weight-bold text-white bg-primary rounded-pill">Choose Floors</p>
+                                <% Allfloors.forEach(floor => { %>
+                                  <% if (locals.floors) { %>
+                                   
+                                    <% if (locals.floors.includes(floor) ) { %>
+                                      <input id=" <%= floor %> " type="checkbox" value="<%= floor %>" name="floors[]" onchange="this.form.submit()" checked>
+                                      <label for=" <%= floor %> " class="text-sm"> <%= floor %> </label>
+                                    <% } else{ %>
+                                    <input id=" <%= floor %> " type="checkbox" value="<%= floor %>" name="floors[]" onchange="this.form.submit()">
+                                    <label for=" <%= floor %> " class="text-sm"> <%= floor %> </label>
+                                    <% } %>
+                                  <% } else{ %>
+                                    <input id=" <%= floor %> " type="checkbox" value="<%= floor %>" name="floors[]" onchange="this.form.submit()">
+                                    <label for=" <%= floor %> " class="text-sm"> <%= floor %></label>
+                                    <% } %>
+                                  <% }) %>
+
+                                  <% if (locals.Allrooms) { %>
+                                    <p class="font-weight-bold text-white bg-primary rounded-pill">Choose Rooms</p>
+                                  <% Allrooms.forEach((room,i) => { %>
+                                    <% if (i % 3 == 2) { %>
+                                     <br>
+                                    <% } %>
+                                    <% if (locals.rooms) { %>
+                                    
+                                      <% if (locals.rooms.includes(room.room_id) ) { %>
+                                        <input id=" <%= room.room_id %> " type="checkbox" value="<%= room.room_id %>" name="rooms[]" onchange="this.form.submit()" checked>
+                                        <label for=" <%= room.room_id %> " class="text-sm"> <%= room.room_id %> </label>
+                                      <% } else{ %>
+                                      <input id=" <%= room.room_id %> " type="checkbox" value="<%= room.room_id %>" name="rooms[]" onchange="this.form.submit()">
+                                      <label for=" <%= room.room_id %> " class="text-sm"> <%= room.room_id %> </label>
+                                      <% } %>
+                                    <% } else{ %>
+                                      <input id=" <%= room.room_id %> " type="checkbox" value="<%= room.room_id %>" name="rooms[]" onchange="this.form.submit()">
+                                      <label for=" <%= room.room_id %> " class="text-sm"> <%= room.room_id %></label>
+                                      <% } %>
+                                    <% }) %>
+                                    <% if (locals.rooms) { %>
+                                      <br>
+                                      <input type="text" hidden  name="submitted" id="subBtn">
+                                      <button type="submit" onclick="javascript:(function() {  document.getElementById('subBtn').value = 'true'; })()" class="btn btn-xs bg-gradient-success font-weight-bolder text-bg-light">Save Preference</button>
+                                      <% }  %>
+
+                                    <% }  %>
+                                    
+                                <% }  %>
+                                <p class="text-sm font-weight-bold mb-0"><a href="./requestroom" class="btn btn-xs btn-danger">Cancel</a> </p>
+                            <% } else{ %>
+                              
+                      <p class="text-sm font-weight-bold mb-0"><button type="submit" class="btn btn-info">Request Room</button> </p>
+                      <% } %>
+                      <% } else{ %>
+                              
+                        <p class="text-sm font-weight-bold mb-0"><button type="submit" class="btn btn-info">Request Room</button> </p>
+                        <% } %>
+                        <% } else{ %>
+                              
+                          <p class="text-sm font-weight-bold mb-0"><button type="submit" class="btn btn-info">Request Room</button> </p>
+                          <% } %>
+                    </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+    </div>
+    <% } %>
+    </div>
+<%- include('partials/footer') %>

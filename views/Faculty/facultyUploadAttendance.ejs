@@ -1,0 +1,102 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4 min-vh-100 ">
+  <% if (locals.sectionCode) { %>
+    <form action="./viewmarks" method="get">
+     
+      <button class="btn  disabled btn-github text-white text-md text-dark fw-bolder  mb-0">Session</button>
+      <div class="dropdown">
+      
+        <button class="btn btn-lg btn-white dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          <% if (!locals.selectedDate) { %>
+          Select Session
+          <% }else{ %>
+              <%= selectedDate  %> 
+            <% }%>
+        </button>
+        <ul class="dropdown-menu   text-center max-height-200 overflow-auto" aria-labelledby="dropdownMenuButton">
+          <% if (locals.datesArray) { %>
+            <% datesArray.forEach((x,i) => { %>
+              <li>Class <%= i+1 %> <a class="dropdown-item fw-bolder " href="?sectionCode=<%= sectionCode %>&selectedDate=<%= x %>">  <%= slotDay %> || <%= x %> || <%= slotTime %>   </a></li>
+            
+            <% }) %>
+          
+          <% } %>
+         
+        </ul>
+      </div>
+    
+    
+
+  </form>
+  <% } %>
+  <% if (locals.attendanceDetails) { %>
+    <form action="./uploadattendance" method="POST">
+      <input type="text" name="selectedDate" value="<%=selectedDate%>" hidden>
+      <input type="text" name="sectionCode" value="<%= sectionCode %>" hidden>
+    <div class="table-responsive">
+           
+      <div class="card">
+          <div class="table-responsive">
+            <table class="table align-items-center mb-0 table-group-divider">
+              <thead class=" text-white bg-default">
+                <tr class="align-middle text-center">
+                 
+                  <th class="text-uppercase text-sm font-weight-bolder ">Student ID</th>
+                  
+                  <th class="text-uppercase text-sm font-weight-bolder  ">Student Name</th>
+                
+                  <th class="text-uppercase text-sm font-weight-bolder "> Present </th>    
+                  <th class="text-uppercase text-sm font-weight-bolder "> Absents </th>
+                 
+        
+                  
+                 
+                </tr>
+              </thead>
+              <tbody id="myTable">
+                  <% attendanceDetails.forEach(x => { %>
+                   
+                  
+                <tr class="align-middle text-center text-sm">
+  
+                    <td>
+                    
+                        
+                      <p class="text-sm font-weight-bold mb-0"><%= x.student_id  %></p>
+                    
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.student_firstname %> <%= x.student_lastname %></p>
+                     
+                    </td>
+                 
+                    <td>
+                      <% if (x.status === 'Present') { %>
+                        <input type="checkbox" name="attendanceStatus[]" id="" value="<%= x.student_id  %>" checked>
+                      <% } else{%>
+                     <input type="checkbox" name="attendanceStatus[]" id="" value="<%= x.student_id  %>" >
+                     <% } %>
+                    </td>
+                    <td>
+                      <p class="text-sm font-weight-bold mb-0"><%= x.totalAbsents%> </p>
+                    </td>
+                   
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+  
+    </div>
+    <div class="text-end mr-2 mt-2">
+     
+      <button type="submit" class="btn btn-success text-end">Save</button>
+    </div>
+  </form>
+    <% }%>
+  
+
+  
+  
+<%- include('partials/footer') %>

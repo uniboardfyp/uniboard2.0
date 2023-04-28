@@ -1,0 +1,50 @@
+<%- include('partials/studenthead') %>
+<div class="container-fluid py-4 min-vh-100">
+  <div class="table-responsive ">
+    <table class="   table align-items-center mb-0 table-responsive-sm table-group-divider">
+      <thead class="bg-gradient-dark text-bg-dark">
+        <tr class="align-middle text-center">
+         
+          <th class="text-uppercase text-xs font-weight-bolder opacity-7">Course Title</th>
+          <th class="text-uppercase text-xs font-weight-bolder opacity-7 ps-2">Section Code</th>
+           <th class="opacity-7"></th>
+         
+         
+        </tr>
+      </thead>
+      <tbody class="bg-white text-bg-white"> 
+        <% courses.forEach(x => { %>
+        <tr class="align-middle text-center text-sm">
+
+         
+            <td>
+           
+             
+            
+                
+                <div class="d-flex flex-column justify-content-center px-2 py-2">
+                  <h6 class="mb-0 text-sm "> <%= x.course_title  %> </h6>
+                  <p class="text-xs text-secondary mb-0"><%= x.course_code  %></p>
+                </div>
+            
+            </td>
+            
+            <td>
+              <p class="text-sm font-weight-bold mb-0"><%= x.section_code  %></p>
+             
+            </td>
+           
+            <td class="align-middle text-center text-sm">
+              <form action="./dropcourse" method="post">
+              <button onclick="if(confirm('Drop Section: <%=x.section_code%>')){}else{return false;};" type="submit" class="btn-xs text-center  mt-2 btn btn-danger " name="sectionCode" value="<%=x.encryptedValue%>">Drop Course <i class="fa fa-remove"></i></button>
+            </form>
+            </td>
+            
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  </div>
+<%- include('partials/footer') %>

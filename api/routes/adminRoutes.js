@@ -63,7 +63,7 @@ router.get('/allocaterooms', mustBeLoggedIn, (req, res) => {
   async function scoreFaculty(facultyID) {
     let score = 0;
     let [facultyDetails] = await pool.query(
-      `SELECT * FROM faculty_details WHERE faculty_id = ?`,
+      `SELECT * FROM faculty_details WHERE faculty_id = ? ORDER BY faculty_id`,
       facultyID
     );
     const {
@@ -91,11 +91,11 @@ router.get('/allocaterooms', mustBeLoggedIn, (req, res) => {
 
   async function allotRoom(facultyID) {
     let [requests] = await pool.query(
-      `   SELECT faculty_room_preference.*, courses_offered.faculty_id
-    FROM faculty_room_preference 
-      LEFT JOIN courses_offered ON faculty_room_preference.section_code = courses_offered.section_code
+      `   SELECT faculty_room_request.*, courses_offered.faculty_id
+    FROM faculty_room_request 
+      LEFT JOIN courses_offered ON faculty_room_request.section_code = courses_offered.section_code
     WHERE courses_offered.faculty_id = ?
-    GROUP BY faculty_room_preference.section_code;`,
+    GROUP BY faculty_room_request.section_code;`,
       [facultyID]
     );
 
@@ -162,13 +162,6 @@ router.get('/allocaterooms', mustBeLoggedIn, (req, res) => {
       console.log(faculty.id);
       // await allotRoom(faculty.id);
     }
-
-    const [adminDetails] = await pool.query(
-      `SELECT faculty_room_preference.*, courses_offered.*, faculty_details.*
-      FROM faculty_room_preference 
-        LEFT JOIN courses_offered ON faculty_room_preference.section_code = courses_offered.section_code 
-        LEFT JOIN faculty_details ON courses_offered.faculty_id = faculty_details.faculty_id;`
-    );
 
     res.render('admindashboard', {
       title: 'Admin Dashboard',

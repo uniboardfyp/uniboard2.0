@@ -1,0 +1,73 @@
+<%- include('partials/facultyhead') %>
+<div class="container-fluid py-4 min-vh-100">
+    <input class="form-control mb-2 bg-cover text-dark text-uppercase  text-xs font-weight-bolder opacity-8 w-30" id="tableSearch" type="text" placeholder="Search Course"> 
+   
+    
+          <div class="card table-responsive">
+                <table  class="table   text-center align-items-center mb-0 rounded " >
+                    <thead class=" " style="background-color: rgb(12, 182, 182); color: black;">
+                        <tr  >
+                            <th class="text-uppercase text-sm font-weight-bolder " >Course Code</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Course Name</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Hours</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Section Code</th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Time Slot </th>
+                            <th class="text-uppercase text-sm font-weight-bolder " >Room</th>
+                            <th class="text-uppercase text-sm font-weight-bolder "> </th>
+                            
+                        </tr>
+                    </thead>
+                   
+                    <tbody id="myTable" class=" bg-white" >
+                        <%alreadyRequestedCourses.forEach(function(course){ %>   
+                            <tr >
+                              <td class="text-sm font-weight-bold text-dark" ><%=course.course_code%></td>
+                              <td class="text-sm font-weight-bold text-dark "><%=course.course_title%></td>
+                              <td class="text-sm font-weight-bold text-dark "><%=course.course_credithours%> + 0</td>
+                              <td class="text-sm font-weight-bold text-dark "><%=course.section_code%></td>
+                              <td class="text-sm font-weight-bold text-dark "><%=course.slot_day%> <%=course.slot_time%></td>
+                              <% if(course.room_id === null){%>
+                                  <td  class="text-sm font-weight-bold text-dark">TBD</td>
+                                  <% } else {%>
+                              <td  class="text-sm font-weight-bold text-dark"><%=course.room_id%></td>
+                              <% } %>
+                             <td  class="text-sm font-weight-bold text-dark">
+          
+                              <a class="btn btn-sm disabled btn-info text-dark font-weight-bolder " href="./requestnewcourse?sectioncode=<%=course.section_code%>">Request Pending </a>
+                              <br>
+                              <a class="btn btn-sm btn-danger" href="./cancelrequestnewcourse?sectioncode=<%=course.section_code%>">Delete Request <i class="fas fa-minus-square"></i></a>
+                                </td>
+                            </tr>
+                            <% }); %>
+
+
+
+                        <% availableCourses.forEach(function(course){ %>   
+                  <tr class="align-middle">
+                  
+                 
+                    <td class="text-sm font-weight-bold text-dark py-3"  ><%=course.course_code%></td>
+                    <td class="text-sm font-weight-bold text-dark" ><%=course.course_title%></td>
+                    <td class="text-sm font-weight-bold text-dark" ><%=course.course_credithours%> + 0</td>
+                    <td class="text-sm font-weight-bold text-dark" ><%=course.section_code%></td>
+                    <td class="text-sm font-weight-bold text-dark" ><%=course.slot_day%> <%=course.slot_time%></td>
+                    <% if(course.room_id === null){%>
+                        <td class="text-sm font-weight-bold text-dark" >TBD</td>
+                        <% } else {%>
+                    <td class="text-sm font-weight-bold text-dark"  ><%=course.room_id%></td>
+                    <% } %>
+                   <td>
+
+                    <a class="btn btn-xs btn-behance" href="./requestnewcourse?sectioncode=<%=course.section_code%>">Request Course <i class="fas fa-plus-square"></i></a>
+                    <br>
+                    
+                      </td>
+                  </tr>
+                  <% }); %>
+            </tbody>
+                </table>
+          
+            </div>  
+    </div>
+
+<%- include('partials/footer') %>

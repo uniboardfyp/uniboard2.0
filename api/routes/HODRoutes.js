@@ -55,7 +55,7 @@ router.post('/login', (req, res) => {
           ),
           { httpOnly: true }
         );
-        res.redirect('./HODdashboard');
+        res.redirect('./dashboard');
       }
     }
   }
@@ -67,30 +67,32 @@ router.post('/login', (req, res) => {
 // DELETE ACCOUNT
 
 //will load dashboard
-router.get('/HODdashboard', mustBeLoggedIn, (req, res) => {
+router.get('/dashboard', mustBeLoggedIn, (req, res) => {
   console.log('HOD Dashboard Route!!!');
-  res.render('HODdashboard', {
+  res.render('HodDashboard', {
+    page_name: 'dashboard',
     title: 'HOD Dashboard',
     firstname: globalFirstname,
     lastname: globalLastname,
   });
 });
 
-router.get('/allofferedcourses', mustBeLoggedIn, (req, res) => {
-  console.log('HOD All Offered Courses Route');
+router.get('/offeredcourses', mustBeLoggedIn, (req, res) => {
+  console.log('HOD Offered Courses Route');
   async function getAvailableCourses() {
     const [AllOfferedCourses] = await pool.query(
-      `SELECT courses_offered.*, courses.department_id, courses.course_code, courses.course_title, courses.course_credithours, time_slots.*,
-      faculty_details.*
-FROM courses_offered 
-	LEFT JOIN courses ON courses_offered.course_code = courses.course_code 
-  LEFT JOIN faculty_details ON courses_offered.faculty_id = faculty_details.faculty_id
-	LEFT JOIN time_slots ON courses_offered.slot_id = time_slots.slot_id
-WHERE courses.department_id = ?`,
+      `SELECT section_details.*, courses.department_id, courses.course_code, courses.course_title, courses.course_credithours, time_slots.*,
+      faculty_details.faculty_id,faculty_details.faculty_firstname,faculty_details.faculty_lastname
+FROM section_details 
+	LEFT JOIN courses ON section_details.course_code = courses.course_code 
+  	LEFT JOIN faculty_details ON section_details.faculty_id = faculty_details.faculty_id
+	LEFT JOIN time_slots ON section_details.slot_id = time_slots.slot_id
+    LEFT JOIN semester_details on section_details.semester_id = semester_details.semester_id
+WHERE courses.department_id = ? and semester_details.status='Active'`,
       [globalDepartmentID]
     );
-    res.render('allofferedcourses', {
-      title: 'HOD Dashboard',
+    res.render('HodViewcourses', {
+      page_name: 'offeredcourses',
       firstname: globalFirstname,
       lastname: globalLastname,
       AllOfferedCourses,
@@ -99,16 +101,76 @@ WHERE courses.department_id = ?`,
   getAvailableCourses();
 });
 
+router.get('/inprogresscourses', mustBeLoggedIn, (req, res) => {
+  console.log('HOD In Progress Courses Route');
+  async function getAvailableCourses() {
+    const [AllOfferedCourses] = await pool.query(
+      `SELECT section_details.*, courses.department_id, courses.course_code, courses.course_title, courses.course_credithours, time_slots.*,
+      faculty_details.faculty_id,faculty_details.faculty_firstname,faculty_details.faculty_lastname
+FROM section_details 
+	LEFT JOIN courses ON section_details.course_code = courses.course_code 
+  	LEFT JOIN faculty_details ON section_details.faculty_id = faculty_details.faculty_id
+	LEFT JOIN time_slots ON section_details.slot_id = time_slots.slot_id
+    LEFT JOIN semester_details on section_details.semester_id = semester_details.semester_id
+WHERE courses.department_id = ? and semester_details.status='In Progress'`,
+      [globalDepartmentID]
+    );
+    res.render('HodViewcourses', {
+      page_name: 'inprogresscourses',
+      firstname: globalFirstname,
+      lastname: globalLastname,
+      AllOfferedCourses,
+    });
+  }
+  getAvailableCourses();
+});
+
+router.get('/departmentcourses', mustBeLoggedIn, (req, res) => {
+  console.log('HOD Department Courses Route');
+  async function getAvailableCourses() {
+    const [AllDepartmentCourses] = await pool.query(
+      `SELECT *
+FROM courses 
+WHERE courses.department_id = ?`,
+      [globalDepartmentID]
+    );
+    console.log(AllDepartmentCourses);
+    res.render('HodDepartmentCourses', {
+      page_name: 'departmentcourses',
+      firstname: globalFirstname,
+      lastname: globalLastname,
+      AllDepartmentCourses,
+    });
+  }
+  getAvailableCourses();
+});
+
 router.get('/offernewcourse', mustBeLoggedIn, (req, res) => {
-  console.log('Req Query', req.query.status);
-  const status = req.query.status;
+  console.log('Req Query', req.query);
+  const { courseCode, timeSlot, facultyID, mes } = req.query;
+
   console.log('HOD Offer Course Route');
   async function getAvailableCourses() {
+    const q_getBookedFaculty = ` SELECT section_details.*, semester_details.status
+    FROM section_details 
+      LEFT JOIN semester_details ON section_details.semester_id = semester_details.semester_id
+    WHERE semester_details.status = 'Active' and slot_id = ? and faculty_id IS NOT NULL;`;
+    let bookedFaculty = [];
+    if (timeSlot) {
+      [bookedFaculty] = await pool.query(q_getBookedFaculty, [timeSlot]);
+    }
+    if (bookedFaculty.length) {
+      bookedFaculty = bookedFaculty.map((x) => {
+        return x.faculty_id;
+      });
+    } else {
+      bookedFaculty[0] = 'x142';
+    }
+    console.log(bookedFaculty);
     let [courseCodes] = await pool.query(
       `SELECT courses.course_code
-FROM courses
-	
-WHERE courses.department_id = ?;`,
+       FROM courses
+	     WHERE courses.department_id = ?;`,
       [globalDepartmentID]
     );
     courseCodes = courseCodes.map((x) => {
@@ -126,16 +188,17 @@ WHERE courses.department_id = ?;`,
     let [facultyDetails] = await pool.query(
       `SELECT faculty_id,faculty_firstname,faculty_lastname
       FROM faculty_details
-      WHERE department_id = ?
+      WHERE department_id = ? AND faculty_id NOT IN (?)
       ORDER BY faculty_id;`,
-      [globalDepartmentID]
+      [globalDepartmentID, bookedFaculty]
     );
+
     let arrayFacultySlots = [];
     facultyDetails = await Promise.all(
       facultyDetails.map(async (x) => {
         let [facultySlots] = await pool.query(
-          `SELECT courses_offered.slot_id
-        FROM courses_offered
+          `SELECT section_details.slot_id
+        FROM section_details
         WHERE faculty_id = ?
         `,
           [x.faculty_id]
@@ -149,198 +212,166 @@ WHERE courses.department_id = ?;`,
       })
     );
 
-    res.render('offernewcourse', {
-      title: 'HOD Dashboard',
+    let [selectedSlot] = await pool.query(
+      `SELECT *
+      FROM time_slots
+      WHERE slot_id = ?
+      `,
+      [timeSlot]
+    );
+    let [selectedFaculty] = await pool.query(
+      `SELECT *
+      FROM faculty_details
+      WHERE faculty_id = ?
+      `,
+      [facultyID]
+    );
+    selectedSlot = selectedSlot[0];
+    selectedFaculty = selectedFaculty[0];
+    res.render('HodOfferCourse', {
+      page_name: 'offernewcourse',
       firstname: globalFirstname,
       lastname: globalLastname,
       courseCodes,
       timeSlots,
       facultyDetails,
-      status,
+
+      selectedCourse: courseCode,
+      selectedSlot,
+      selectedFaculty,
+      mes,
     });
   }
   getAvailableCourses();
 });
 
-router.get('/addnewcourse', mustBeLoggedIn, (req, res) => {
-  const { courseCode, timeSlot, faculty } = req.query;
-
-  console.log('Add new course for : ', courseCode);
+router.post('/offernewcourse', mustBeLoggedIn, (req, res) => {
+  const { courseCode, timeSlot, facultyID } = req.body;
   async function addNewCourse() {
-    let message;
-    let [sectionCode] = await pool.query(
-      `SELECT section_code FROM courses_offered ORDER BY courses_offered.section_code DESC LIMIT 1`
-    );
-
-    try {
-      sectionCode = sectionCode[0].section_code;
-    } catch {
-      sectionCode = 'M-1000';
+    let [activeSem] =
+      await pool.query(`SELECT semester_id FROM semester_details WHERE status = 'Active';
+    `);
+    if (activeSem.length) {
+      activeSem = activeSem.map((x) => {
+        return x.semester_id;
+      });
     }
-    sectionCode = sectionCode.slice(2);
+    let [sectionCode] = await pool.query(
+      `SELECT * FROM section_details ORDER BY section_details.section_code DESC LIMIT 1`
+    );
+    if (sectionCode.length) {
+      sectionCode = sectionCode.map((x) => {
+        return x.section_code;
+      });
+    }
+    let secTag = sectionCode[0].slice(0, 2);
+    sectionCode = sectionCode[0].slice(2);
     sectionCode = parseInt(sectionCode);
     sectionCode++;
-    sectionCode = 'M-' + sectionCode;
+    sectionCode = sectionCode.toString();
+    sectionCode = secTag + sectionCode;
     console.log(sectionCode);
-    try {
-      if (faculty === 'null') {
-        await pool.query(
-          `INSERT INTO courses_offered (section_code, course_code, faculty_id, slot_id, room_id, seats) VALUES (?, ?, NULL, ?, NULL, '40');`,
-          [sectionCode, courseCode, timeSlot]
-        );
-      } else {
-        await pool.query(
-          `INSERT INTO courses_offered (section_code, course_code, faculty_id, slot_id, room_id, seats) VALUES (?, ?, ?, ?, NULL, '40');`,
-          [sectionCode, courseCode, faculty, timeSlot]
-        );
-      }
-      message = `Course Offered - Section Code :: ${sectionCode}`;
-    } catch (error) {
-      console.log('Error in add New Course Route', error);
-      message = `Error, Can Not Add New Course. Check Faculty Availability`;
+    if (!facultyID) {
+      await pool.query(
+        `INSERT INTO section_details (section_code, semester_id, course_code, faculty_id, slot_id, room_id, seats) VALUES (?, ?, ?,NULL,?,NULL, '40');`,
+        [sectionCode, activeSem, courseCode, timeSlot]
+      );
+    } else {
+      await pool.query(
+        `INSERT INTO section_details (section_code, semester_id, course_code, faculty_id, slot_id, room_id, seats) VALUES (?, ?, ?, ?,?, NULL, '40');`,
+        [sectionCode, activeSem, courseCode, facultyID, timeSlot]
+      );
     }
-    res.redirect(`./offernewcourse?status=${message}`);
+
+    res.redirect(`./offernewcourse?mes=${sectionCode}`);
   }
 
   addNewCourse();
 });
 
-router.get('/alldepartmentcourses', mustBeLoggedIn, (req, res) => {
-  console.log('HOD All Department Courses Route');
-  async function getAvailableCourses() {
-    const [AllDepartmentCourses] = await pool.query(
-      `SELECT *
-FROM courses 
-WHERE courses.department_id = ?`,
-      [globalDepartmentID]
-    );
-    res.render('alldepartmentcourses', {
-      title: 'HOD Dashboard',
-      firstname: globalFirstname,
-      lastname: globalLastname,
-      AllDepartmentCourses,
-    });
-  }
-  getAvailableCourses();
-});
-
-router.get('/viewcourserequests', mustBeLoggedIn, (req, res) => {
-  console.log('HOD View Faculty Requests Route');
+router.get('/facultycoursereq', mustBeLoggedIn, (req, res) => {
+  console.log('HOD Faculty Course Requests Route');
+  const { sectionCode, facultyID } = req.query;
   async function getAvailableCourses() {
     const [facultyRequests] = await pool.query(
-      `SELECT faculty_offered_courses.*, faculty_details.faculty_firstname, faculty_details.faculty_lastname, courses_offered.course_code, courses.department_id
-FROM faculty_offered_courses 
-	LEFT JOIN faculty_details ON faculty_offered_courses.faculty_id = faculty_details.faculty_id 
-	LEFT JOIN courses_offered ON faculty_offered_courses.section_code = courses_offered.section_code
-	LEFT JOIN courses ON courses_offered.course_code = courses.course_code
-WHERE courses.department_id = ?;`,
+      `SELECT faculty_course_request.*, faculty_details.faculty_firstname, faculty_details.faculty_lastname, courses.* FROM faculty_course_request LEFT JOIN faculty_details ON faculty_course_request.faculty_id = faculty_details.faculty_id LEFT JOIN section_details ON faculty_course_request.section_code = section_details.section_code LEFT JOIN courses ON section_details.course_code = courses.course_code WHERE courses.department_id = ?;`,
       [globalDepartmentID]
     );
     console.log(facultyRequests);
-    res.render('facultycourserequest', {
-      title: 'HOD Dashboard',
+    res.render('HodViewFacultyRequest', {
+      page_name: 'facultycoursereq',
       firstname: globalFirstname,
       lastname: globalLastname,
       facultyRequests,
+      sectionCode,
+      facultyID,
     });
   }
   getAvailableCourses();
 });
 
-router.get('/acceptcourserequest', mustBeLoggedIn, (req, res) => {
-  console.log('HOD Accept Faculty Requests Route');
-  const sectionCode = req.query.sectioncode;
-  const facultyID = req.query.facultyid;
-
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
-
+router.post('/acceptfacultyreq', mustBeLoggedIn, (req, res) => {
+  console.log('HOD Accept Faculty Course Requests Route');
+  console.log(req.body);
+  const { sectionCode, facultyID } = req.body;
   async function getAvailableCourses() {
     await pool.query(
-      `UPDATE courses_offered SET faculty_id = ? WHERE courses_offered.section_code = ?;`,
+      `UPDATE section_details SET faculty_id = ? WHERE section_details.section_code = ?;`,
       [facultyID, sectionCode]
     );
     await pool.query(
-      `DELETE FROM faculty_offered_courses WHERE faculty_offered_courses.section_code = ?`,
-      [sectionCode]
+      `
+    DELETE FROM faculty_course_request WHERE faculty_course_request.section_code = ? AND faculty_course_request.faculty_id = ?`,
+      [sectionCode, facultyID]
     );
-    let [timeSlot] = await pool.query(
-      `SELECT courses_offered.slot_id
-      FROM courses_offered
-      WHERE courses_offered.section_code = ?;`,
-      [sectionCode]
+    res.redirect(
+      `./facultycoursereq?sectionCode=${sectionCode}&facultyID=${facultyID}`
     );
-    timeSlot = timeSlot[0].slot_id;
-    let [result2] = await pool.query(
-      `SELECT faculty_offered_courses.section_code, courses_offered.slot_id
-          FROM faculty_offered_courses 
-          LEFT JOIN courses_offered ON faculty_offered_courses.section_code = courses_offered.section_code
-           WHERE faculty_offered_courses.faculty_id = ? AND courses_offered.slot_id = ? ;`,
-      [facultyID, timeSlot]
-    );
-    result2 = result2.map((x) => {
-      return x.section_code;
-    });
-    if (result2.length) {
-      try {
-        await pool.query(
-          `DELETE FROM faculty_offered_courses WHERE faculty_offered_courses.faculty_id = ? AND faculty_offered_courses.section_code IN (?)`,
-          [facultyID, result2]
-        );
-      } catch {}
-      console.log(result2);
-    }
-
-    res.redirect(`./viewcourserequests`);
   }
   getAvailableCourses();
 });
-router.get('/rejectcourserequest', mustBeLoggedIn, (req, res) => {
-  console.log('HOD Delete Faculty Requests Route');
-  const sectionCode = req.query.sectioncode;
-  const facultyID = req.query.facultyid;
 
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
+router.post('/rejectfacultyreq', mustBeLoggedIn, (req, res) => {
+  console.log('HOD Reject Faculty Course Requests Route');
 
+  const { sectionCode, facultyID } = req.body;
   async function getAvailableCourses() {
     await pool.query(
-      `DELETE FROM faculty_offered_courses WHERE faculty_offered_courses.section_code = ? AND faculty_offered_courses.faculty_id = ? `,
+      `
+    DELETE FROM faculty_course_request WHERE faculty_course_request.section_code = ? AND faculty_course_request.faculty_id = ?`,
       [sectionCode, facultyID]
     );
-    res.redirect(`./viewcourserequests`);
+    res.redirect(`./facultycoursereq`);
   }
   getAvailableCourses();
 });
 
 router.get('/deleteofferedcourse', mustBeLoggedIn, (req, res) => {
   console.log('HOD Delete Offered Course Route');
-  const status = req.query.status;
+  const { mes } = req.query;
 
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
+  //UPDATE section_details SET faculty_id = '1000' WHERE section_details.section_code = 'M-1000';
 
   async function getAvailableSections() {
-    let [sectionCodes] = await pool.query(
-      `SELECT courses_offered.section_code, courses.department_id
-         FROM courses_offered
-         LEFT JOIN courses ON courses_offered.course_code = courses.course_code
-         WHERE courses.department_id = ?
-         ORDER BY section_code`,
+    let [courses] = await pool.query(
+      `SELECT section_details.section_code, courses.* FROM section_details LEFT JOIN courses ON section_details.course_code = courses.course_code LEFT JOIN semester_details ON semester_details.semester_id = section_details.semester_id WHERE courses.department_id = ? AND semester_details.status = 'Active' ORDER BY section_code;`,
       [globalDepartmentID]
     );
 
-    sectionCodes = sectionCodes.map((x) => {
-      return x.section_code;
-    });
+    // sectionCodes = sectionCodes.map((x) => {
+    //   return x.section_code;
+    // });
 
     // timeSlots = timeSlots.map((x) => {
     //   return x.course_code;
     // });
 
-    res.render('deleteofferedcourse', {
-      title: 'HOD Dashboard',
+    res.render('HodDeleteCourse', {
+      page_name: 'deleteofferedcourse',
       firstname: globalFirstname,
       lastname: globalLastname,
-      sectionCodes,
-      status,
+      courses,
+      mes,
     });
   }
 
@@ -348,18 +379,18 @@ router.get('/deleteofferedcourse', mustBeLoggedIn, (req, res) => {
 });
 
 router.post('/deleteofferedcourse', mustBeLoggedIn, (req, res) => {
-  const sectionCode = req.body.sectioncode;
+  const { sectionCode } = req.body;
   console.log('HOD Delete Offered Course Route Section: ', sectionCode);
 
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
+  //UPDATE section_details SET faculty_id = '1000' WHERE section_details.section_code = 'M-1000';
 
   async function deleteSection() {
-    let [sectionCodes] = await pool.query(
-      `DELETE FROM courses_offered WHERE courses_offered.section_code = ?;`,
+    await pool.query(
+      `DELETE FROM section_details WHERE section_details.section_code = ?;`,
       [sectionCode]
     );
-    const message = `Deleted Section : ${sectionCode}`;
-    res.redirect(`./deleteofferedcourse?status=${message}`);
+
+    res.redirect(`./deleteofferedcourse?mes=${sectionCode}`);
   }
 
   deleteSection();
@@ -367,16 +398,74 @@ router.post('/deleteofferedcourse', mustBeLoggedIn, (req, res) => {
 
 router.get('/allotfaculty', mustBeLoggedIn, (req, res) => {
   console.log('HOD Allot Faculty Route');
-  const status = req.query.status;
+  const { sectionCode, timeSlot, facultyID, secCodePOST, facIDPOST } =
+    req.query;
 
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
+  //UPDATE section_details SET faculty_id = '1000' WHERE section_details.section_code = 'M-1000';
+  async function allotFaculty() {
+    let bookedFaculty = [],
+      facultyDetails = [],
+      selectedFaculty;
+    const [sections] = await pool.query(
+      `SELECT section_details.*     
+       FROM section_details 
+      LEFT JOIN semester_details on section_details.semester_id = semester_details.semester_id
+WHERE semester_details.status='Active' and section_details.faculty_id IS NULL`
+    );
+    if (sectionCode) {
+      const q_getBookedFaculty = ` SELECT section_details.*, semester_details.status
+    FROM section_details 
+      LEFT JOIN semester_details ON section_details.semester_id = semester_details.semester_id
+    WHERE semester_details.status = 'Active' and slot_id = ? and faculty_id IS NOT NULL;`;
 
+      if (timeSlot) {
+        [bookedFaculty] = await pool.query(q_getBookedFaculty, [timeSlot]);
+      }
+      if (bookedFaculty.length) {
+        bookedFaculty = bookedFaculty.map((x) => {
+          return x.faculty_id;
+        });
+      } else {
+        bookedFaculty[0] = 'x142';
+      }
+      console.log(bookedFaculty);
+      [facultyDetails] = await pool.query(
+        `SELECT faculty_id,faculty_firstname,faculty_lastname
+        FROM faculty_details
+        WHERE department_id = ? AND faculty_id NOT IN (?)
+        ORDER BY faculty_id;`,
+        [globalDepartmentID, bookedFaculty]
+      );
+    }
+    if (facultyID) {
+      [selectedFaculty] = await pool.query(
+        `SELECT faculty_id,faculty_firstname,faculty_lastname
+        FROM faculty_details
+        WHERE faculty_id = ?`,
+        [facultyID]
+      );
+      selectedFaculty = selectedFaculty[0];
+    }
+    console.log(selectedFaculty);
+    res.render('HodAllotFaculty', {
+      page_name: 'allotfaculty',
+      firstname: globalFirstname,
+      lastname: globalLastname,
+      sections,
+      selectedSection: sectionCode,
+      facultyDetails,
+      timeSlot,
+      selectedFaculty,
+      secCodePOST,
+      facIDPOST,
+    });
+  }
   async function getSections() {
     let [sectionDetails] = await pool.query(
-      `SELECT courses_offered.section_code, courses_offered.slot_id
-      FROM courses_offered
-      LEFT JOIN courses ON courses_offered.course_code = courses.course_code
-      WHERE courses_offered.faculty_id IS NULL AND courses.department_id = ?
+      `SELECT section_details.section_code, section_details.slot_id
+      FROM section_details
+      LEFT JOIN courses ON section_details.course_code = courses.course_code
+      WHERE section_details.faculty_id IS NULL AND courses.department_id = ?
       ORDER BY section_code`,
       [globalDepartmentID]
     );
@@ -389,9 +478,9 @@ router.get('/allotfaculty', mustBeLoggedIn, (req, res) => {
       i = -1;
     for (const slotID of slotIDs) {
       [result] = await pool.query(
-        `SELECT courses_offered.faculty_id, courses_offered.slot_id
-        FROM courses_offered
-        WHERE faculty_id IS NOT NULL AND courses_offered.slot_id = '?' ;`,
+        `SELECT section_details.faculty_id, section_details.slot_id
+        FROM section_details
+        WHERE faculty_id IS NOT NULL AND section_details.slot_id = '?' ;`,
         [slotID]
       );
       i++;
@@ -442,23 +531,25 @@ router.get('/allotfaculty', mustBeLoggedIn, (req, res) => {
     //   status,
     // });
   }
-
-  getSections();
+  allotFaculty();
+  // getSections();
 });
 
 router.post('/allotfaculty', mustBeLoggedIn, (req, res) => {
   const { sectionCode, facultyID } = req.body;
   console.log('HOD Allot Course Section and ID : ', sectionCode, facultyID);
 
-  //UPDATE courses_offered SET faculty_id = '1000' WHERE courses_offered.section_code = 'M-1000';
+  //UPDATE section_details SET faculty_id = '1000' WHERE section_details.section_code = 'M-1000';
 
   async function allotFaculty() {
-    let [sectionCodes] = await pool.query(
-      `UPDATE courses_offered SET faculty_id = ? WHERE courses_offered.section_code = ?;`,
+    await pool.query(
+      `UPDATE section_details SET faculty_id = ? WHERE section_details.section_code = ?;`,
       [facultyID, sectionCode]
     );
-    const message = `Section ${sectionCode} Alloted to Faculty ${facultyID}`;
-    res.redirect(`./allotfaculty?status=${message}`);
+
+    res.redirect(
+      `./allotfaculty?secCodePOST=${sectionCode}&facIDPOST=${facultyID}`
+    );
   }
 
   allotFaculty();

@@ -1,0 +1,169 @@
+<%- include('partials/HODhead') %>
+<div class="container-fluid py-4 min-vh-100">
+    <% if(locals.mes){ %>
+        <div class="alert bg-success text-bg-success fw-bold  alert-dismissible fade show" role="alert">
+            <strong> Section Code : <%= mes %> Offered! </strong> 
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"> <i class="fa fa-close"></i> </button>
+        </div>
+        <% } %>
+    <div class="table-responsive min-vh-100">
+    <table  class="table text-center bg-light rounded table-sm" id="dataTable" >
+        <form action="./offernewcourse" method="post">
+         <tr>
+             <th class="text-center bg-warning" colspan="2">
+                <h5 class="text-center  text-white">Offer New Course</h5>
+            
+             </th>
+         </tr>
+         
+         <tr>
+             <th class="text-bolder text-dark  ">
+                 Course Code
+             </th>
+             <td>
+                
+                <div class="dropdown d-inline-block ">
+                    <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <% if (!locals.selectedCourse) { %>
+                      Select Course
+                      <% }else{ %>
+                          <%= selectedCourse  %> 
+                        <% }%>
+                    </button>
+                   
+                      <% if (locals.courseCodes) { %>
+                        <ul class="dropdown-menu max-height-200  overflow-auto  text-center " aria-labelledby="dropdownMenuButton2">
+                        <input class="form-control mb-2  text-dark text-uppercase  text-xs font-weight-bolder opacity-8" id="myInput" type="text" placeholder="Search Course"> 
+                        <% courseCodes.forEach(x => { %>
+                            <% if (!locals.selectedSlot) { %>
+                                <li><a class="dropdown-item fw-bolder " href="?courseCode=<%= x %>"> <%=x %> </a></li>
+                                <% }else{ %>
+                                     <li><a class="dropdown-item fw-bolder " href="?courseCode=<%= x %>&timeSlot=<%= selectedSlot.slot_id %>"> <%=x %>
+                                  <% }%>
+                        
+                        
+                              
+                             
+                        
+                        <% }) %> </ul>
+                      <% } %>
+                     
+                   
+                  </div>
+
+                  
+               
+             </td>
+         </tr>
+         <tr>
+             <th class="text-bolder text-dark  ">
+                 Time Slot
+             </th>
+             <td>
+
+                <div class="dropdown d-inline-block  ">
+                    <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                      <% if (!locals.selectedSlot) { %>
+                      Select Time Slot
+                      <% }else{ %>
+                          <%= selectedSlot.slot_day %> <%= selectedSlot.slot_time %>
+                        <% }%>
+                    </button>
+                   
+                      <% if (locals.timeSlots) { %>
+                        <ul class="dropdown-menu max-height-200  overflow-auto  text-center " aria-labelledby="dropdownMenuButton3">
+                        <input class="form-control mb-2  text-dark text-uppercase  text-xs font-weight-bolder opacity-8" id="myInput2" type="text" placeholder="Search Time Slot"> 
+                        <% timeSlots.forEach(x => { %>
+                            <% if (!locals.selectedCourse) { %>
+                                <li><a class="dropdown-item fw-bolder " href="?timeSlot=<%= x.slot_id %>"> <%= x.slot_day %> <%= x.slot_time %> </a>
+                                <% }else{ %>
+                                    <li><a class="dropdown-item fw-bolder " href="?courseCode=<%= selectedCourse %>&timeSlot=<%= x.slot_id %>"> <%= x.slot_day %> <%= x.slot_time %> </a>
+                                  <% }%>
+                           
+                        
+                              
+                             
+                        
+                        <% }) %> </ul>
+                      <% } %>
+                     
+                   
+                  </div>
+
+               
+             </td>
+         </tr>
+         <tr>
+             <th class="text-bolder text-dark  ">
+                 Faculty
+             </th>
+             <td>
+
+                <div class="dropdown d-inline-block ">
+                    <% if (!locals.selectedSlot || !locals.selectedCourse) { %>
+                        <button class="btn btn-white dropdown-toggle disabled" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">Select Faculty (Optional) </button>
+                        <% }else{ %>
+                            <button class="btn btn-white dropdown-toggle" type="button" id="dropdownMenuButton4" data-bs-toggle="dropdown" aria-expanded="false">
+                                <% if (!locals.selectedFaculty) { %>
+                                    Select Faculty (Optional)
+                                    <% }else{ %>
+                                        <%= selectedFaculty.faculty_firstname  %>  <%= selectedFaculty.faculty_lastname  %> 
+                                      <% }%>
+                                    </button>
+                                    <% if (locals.facultyDetails) { %>
+                                        <ul class="dropdown-menu max-height-200  overflow-auto  text-center " aria-labelledby="dropdownMenuButton4">
+                                        <input class="form-control mb-2  text-dark text-uppercase  text-xs font-weight-bolder opacity-8" id="myInput3" type="text" placeholder="Search Faculty"> 
+                                        <li><a class="dropdown-item fw-bolder " href="?courseCode=<%= selectedCourse %>&timeSlot=<%= selectedSlot.slot_id %>"> Faculty Member
+                                             </a></li>
+                                        <% facultyDetails.forEach(x => { %>
+                                          <li><a class="dropdown-item fw-bolder " href="?courseCode=<%= selectedCourse %>&timeSlot=<%= selectedSlot.slot_id %>&facultyID=<%= x.faculty_id %>"> <%= x.faculty_firstname %> <%= x.faculty_lastname %>
+                                            <%= x.faculty_id %> </a></li>
+                                        
+                                              
+                                             
+                                        
+                                        <% }) %> </ul>
+                                      <% } %>
+                                <% }%>
+                   
+                    
+                   
+                   
+                    
+                      
+                     
+                   
+                  </div>
+
+                
+             </td>
+         </tr>
+         <tr>
+             <th> </th>
+            
+             <% if (!locals.selectedSlot || !locals.selectedCourse) { %>
+                <td><button class='btn btn-success disabled opacity-0' type="submit">Add Course</button></td>
+                <% }else{ %>
+
+                    <input type="text" name="courseCode" hidden  value="<%=selectedCourse  %>">
+                    <input type="text" name="timeSlot" hidden  value="<%=selectedSlot.slot_id  %>">
+
+                    <% if (locals.selectedFaculty) { %>
+                        <input type="text" name="facultyID" hidden value="<%=selectedFaculty.faculty_id  %>">
+
+                    <% } %>
+                        
+                 
+                    <td><button class='btn btn-success' type="submit">Add Course</button></td>
+                    <% } %>
+                  
+         </tr>
+         
+        </form>
+     </table>
+     <% if (locals.selectedSlot || locals.selectedCourse) { %>
+        <a class="btn btn-danger " href="./offernewcourse">Clear </a>
+        <% }%>
+    </div>
+    </div>
+<%- include('partials/footer') %>
